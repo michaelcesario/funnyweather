@@ -1,1 +1,1 @@
-web: python3 funnyweather.py
+web: gunicorn app:funnyweather

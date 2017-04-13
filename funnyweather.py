@@ -1,5 +1,10 @@
 from pyrebase import pyrebase
 from flask import Flask, jsonify, request
+
+
+app = Flask(__name__) #global object for file
+
+
 config = {
   "apiKey": "AIzaSyCOsBU3ROQlKhuikpRbagIJxl1P7OATfmY",
   "authDomain": "funnyweather-1cf97.firebaseapp.com",
@@ -11,11 +16,10 @@ firebase = pyrebase.initialize_app(config)
 
 db = firebase.database()
 
-db.child("cities").push("Toronto")
+db.child("cities").push("Test")
 
-print("Hello, World!")
 
-app = Flask(__name__) #global object for file
+
 
 @app.route("/hello") #endpoint that clients reach via route
 def hello(): #function that will run when client reaches endpoint
