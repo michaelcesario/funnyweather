@@ -32,7 +32,7 @@ def add_city():
 	
 	data = {"city":city,"weather":weather}
 	db.child("cities").push(data)
-	return "yay";
+	return jsonify(success=True);
 	
 
 if __name__ == "__main__": 
