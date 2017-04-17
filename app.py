@@ -1,7 +1,6 @@
 from pyrebase import pyrebase
 from flask import Flask, jsonify, request
 
-
 app = Flask(__name__) #global object for file
 
 
@@ -30,9 +29,10 @@ def add_city():
 	dict = request.get_json() #save incoming json data from client into dictionary
 	city = dict['city']
 	weather = dict['weather']
-    
-    data = {"city" : city, "weather" : weather}
+	
+	data = {"city":city,"weather":weather}
 	db.child("cities").push(data)
+	return "yay";
 	
 
 if __name__ == "__main__": 
