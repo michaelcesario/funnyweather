@@ -25,12 +25,14 @@ db.child("cities").push("Test")
 def hello(): #function that will run when client reaches endpoint
 	return "Hello World!";
 
-@app.route("/add_user")#, methods = ['POST'])
-def add_user():
-	#dict = request.get_json() #save incoming json data from client into dictionary
-	#username = dict['username']
-	#email = dict['email']
-	db.child("cities").push("Toronto")	
+@app.route("/add_city", methods = ['POST'])
+def add_city():
+	dict = request.get_json() #save incoming json data from client into dictionary
+	city = dict['city']
+	weather = dict['weather']
+    
+    data = {"city" : city, "weather" : weather}
+	db.child("cities").push(data)
 	
 
 if __name__ == "__main__": 
