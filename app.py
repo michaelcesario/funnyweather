@@ -1,6 +1,6 @@
 from pyrebase import pyrebase
 from flask import Flask, jsonify, request
-from apns import APNs, Frame, Payload
+from pushjack import APNSSandboxClient
 
 app = Flask(__name__) #global object for file
 
@@ -16,27 +16,31 @@ firebase = pyrebase.initialize_app(config)
 
 db = firebase.database()
 
-apns = APNs(use_sandbox=True, cert_file='aps_dev_cert.pem', key_file='aps_dev_key.pem')
+client = APNSSandboxClient(certificate='aps_dev_cert.pem',
+                    default_error_timeout=10,
+                    default_expiration_offset=2592000,
+                    default_batch_size=100)
 
-# Send an iOS 10 compatible notification
-token_hex = 'd69bd4faa2beca2ff103fb172643d7dfd66304187afcb63cc0ab417856447d33'
-payload = Payload(alert="Hello World!", sound="default", badge=1, mutable_content=True)
-apns.gateway_server.send_notification(token_hex, payload)
-
-# Send multiple notifications in a single transmission
-frame = Frame()
-identifier = 1
-expiry = time.time()+3600
-priority = 10
-frame.add_item('b5bb9d8014a0f9b1d61e21e796d78dccdf1352f23cd32812f4850b87', payload, identifier, expiry, priority)
-
-
+token = 'd69bd4faa2beca2ff103fb172643d7dfd66304187afcb63cc0ab417856447d33'
+alert = 'Hello world.'
 
 
 @app.route("/hello") #endpoint that clients reach via route
 def hello(): #function that will run when client reaches endpoint
-    apns.gateway_server.send_notification_multiple(frame)
-	return "Hello World!";
+    res = client.send(token,
+                  alert,
+                  badge='badge count',
+                  sound='sound to play',
+                  category='category',
+                  content_available=True,
+                  title='Title',
+                  title_loc_key='t_loc_key',
+                  title_loc_args='t_loc_args',
+                  action_loc_key='a_loc_key',
+                  loc_key='loc_key',
+                  launch_image='path/to/image.jpg',
+                  extra={'custom': 'data'})
+    return "Hello World!"
 
 @app.route("/add_city", methods = ['POST'])
 def add_city():
