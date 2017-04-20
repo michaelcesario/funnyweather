@@ -1,6 +1,6 @@
 from pyrebase import pyrebase
 from flask import Flask, jsonify, request
-from pushjack import APNSSandboxClient
+from pyfcm import FCMNotification
 
 app = Flask(__name__) #global object for file
 
@@ -16,31 +16,17 @@ firebase = pyrebase.initialize_app(config)
 
 db = firebase.database()
 
-client = APNSSandboxClient(certificate='aps_dev_cert.pem',
-                    default_error_timeout=10,
-                    default_expiration_offset=2592000,
-                    default_batch_size=100)
-
-token = 'd69bd4faa2beca2ff103fb172643d7dfd66304187afcb63cc0ab417856447d33'
-alert = 'Hello world.'
+push_service = FCMNotification(api_key="AAAAOkKnKuU:APA91bHV-cbWn_zGoWcMsIyUb2Vs1TKYh2wk1STLDnRu76O9ADSPgNMIlQkE92M02vfAOTLyvHhM_KG7DQ3l-9cpTMfo2FSkZHxSoSWN-M4G2c5VkG7-lS0HFI1zJfp0sB0Cg42kmxKJ")
 
 
 @app.route("/hello") #endpoint that clients reach via route
 def hello(): #function that will run when client reaches endpoint
-    res = client.send(token,
-                  alert,
-                  badge='badge count',
-                  sound='sound to play',
-                  category='category',
-                  content_available=True,
-                  title='Title',
-                  title_loc_key='t_loc_key',
-                  title_loc_args='t_loc_args',
-                  action_loc_key='a_loc_key',
-                  loc_key='loc_key',
-                  launch_image='path/to/image.jpg',
-                  extra={'custom': 'data'})
+    registration_id = "cHzRiWhEqM4:APA91bGpJLlJSlv9T5WjV9uKrI6HPUWZLwHY-t7Q6M2Jvf5nETq3BgCCr0Rtb4a2vqEt6rTIDpWw85t4Q_wsneYZabbnRFeC9KUVGk7oSlL1l9rUJaMs32Je3-tJKKtzBzDyVtSF0EeJ"
+    message_title = "update"
+    message_body = "test body"
+    result = push_service.notify_single_device(registration_id=registration_id, message_title=message_title, message_body=message_body)
     return "Hello World!"
+
 
 @app.route("/add_city", methods = ['POST'])
 def add_city():
